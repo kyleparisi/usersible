@@ -1,7 +1,7 @@
 ---
 # Add/remove users to servers
 
-- hosts: all
+- hosts: all,localhost
   become: yes
   roles:
     - { role: users, tags: users }

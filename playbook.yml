@@ -1,0 +1,7 @@
+---
+# Add/remove users to servers
+
+- hosts: all
+  become: yes
+  roles:
+    - { role: users, tags: users }

@@ -1,0 +1,33 @@
+# Manage users on servers
+
+- name: Make sure we have a 'admin' group
+  group:
+    name: admin
+    state: present
+
+- name: Allow 'admin' group to have passwordless sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%admin'
+    line: '%admin ALL=(ALL) NOPASSWD: ALL'
+    validate: visudo -cf %s
+
+- user:
+    name: "{{ item.name }}"
+    comment: "{{ item.comment }}"
+    group: "{{ item.group }}"
+    shell: "{{ item.shell}}"
+    state: "{{ item.state }}"
+  with_items: "{{ users }}"
+  when: users is defined
+
+- name: Set authorized keys
+  authorized_key:
+    user: "{{ item.name }}"
+    state: "{{ item.state }}"
+    key: "{{ item.ssh_key }}"
+  with_items: "{{ users }}"
+  when: 
+    - users is defined 
+    - item.state == 'present'
